@@ -1,5 +1,7 @@
 using WasteBatteriesRegBackend.Example.Endpoints;
 using WasteBatteriesRegBackend.Example.Services;
+using WasteBatteriesRegBackend.ExampleData.Endpoints;
+using WasteBatteriesRegBackend.ExampleData.Services;
 using WasteBatteriesRegBackend.Config;
 using WasteBatteriesRegBackend.Utils;
 using WasteBatteriesRegBackend.Utils.Http;
@@ -58,6 +60,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
     // App services
     services.AddSingleton<IExamplePersistence, ExamplePersistence>();
+    services.AddSingleton<IExampleDataPersistence, ExampleDataPersistence>();
 }
 
 [ExcludeFromCodeCoverage]
@@ -114,4 +117,6 @@ static void ConfigureEndpoints(WebApplication app)
 
     // Remove before deploying
     app.MapExampleEndpoints();
+
+    app.MapExampleDataEndpoints();
 }

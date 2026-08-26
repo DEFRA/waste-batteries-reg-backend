@@ -21,7 +21,7 @@ public class ExampleEndpointsTest
         await using var factory = new TestApplicationFactory();
         using var client = factory.CreateClient();
 
-        var response = await client.PostAsJsonAsync("/example", new CreateExampleRequest
+        var response = await client.PostAsJsonAsync("/db-demo", new CreateExampleRequest
         {
             Name = "alpha",
             Value = "first value",
@@ -29,7 +29,7 @@ public class ExampleEndpointsTest
         }, cancellationToken);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.Equal("/example/alpha", response.Headers.Location?.AbsolutePath);
+        Assert.Equal("/db-demo/alpha", response.Headers.Location?.AbsolutePath);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class ExampleEndpointsTest
         await using var factory = new TestApplicationFactory();
         using var client = factory.CreateClient();
 
-        var response = await client.PostAsJsonAsync("/example", new CreateExampleRequest
+        var response = await client.PostAsJsonAsync("/db-demo", new CreateExampleRequest
         {
             Name = string.Empty,
             Value = string.Empty,
@@ -67,7 +67,7 @@ public class ExampleEndpointsTest
             .ThrowsAsync(new ExampleConflictException("alpha", new Exception()));
 
 
-        var response = await client.PostAsJsonAsync("/example", new CreateExampleRequest
+        var response = await client.PostAsJsonAsync("/db-demo", new CreateExampleRequest
         {
             Name = "alpha",
             Value = "second value",
@@ -92,7 +92,7 @@ public class ExampleEndpointsTest
             .UpdateAsync(Arg.Any<ExampleModel>(), Arg.Any<CancellationToken>())
             .Returns(new ExampleModel { Name = "alpha", Counter = 1, Value = "first value" });
 
-        var response = await client.PutAsJsonAsync("/example/alpha", new UpdateExampleRequest
+        var response = await client.PutAsJsonAsync("/db-demo/alpha", new UpdateExampleRequest
         {
             Value = "updated value",
             Counter = 9
@@ -108,7 +108,7 @@ public class ExampleEndpointsTest
         await using var factory = new TestApplicationFactory();
         using var client = factory.CreateClient();
 
-        await client.GetFromJsonAsync<List<ExampleModel>>("/example?searchTerm=starter", cancellationToken);
+        await client.GetFromJsonAsync<List<ExampleModel>>("/db-demo?searchTerm=starter", cancellationToken);
         await factory.MockPersistence.Received().SearchAsync(Arg.Is("starter"), Arg.Any<CancellationToken>());
     }
 
@@ -123,7 +123,7 @@ public class ExampleEndpointsTest
             .DeleteAsync(Arg.Is("alpha"), Arg.Any<CancellationToken>())
             .Returns(true);
 
-        var response = await client.DeleteAsync("/example/alpha", cancellationToken);
+        var response = await client.DeleteAsync("/db-demo/alpha", cancellationToken);
         await factory.MockPersistence.Received().DeleteAsync(Arg.Is("alpha"), Arg.Any<CancellationToken>());
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
