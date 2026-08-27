@@ -90,7 +90,7 @@ configuration for the real Defra ID/API audience.
 
 ### SonarCloud
 
-Example SonarCloud configuration are available in the GitHub Action workflows.
+SonarCloud analysis runs from the pull request, publish and publish-hotfix GitHub Action workflows.
 
 ### Dependabot
 
