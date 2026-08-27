@@ -92,6 +92,21 @@ configuration for the real Defra ID/API audience.
 
 SonarCloud analysis runs from the pull request, publish and publish-hotfix GitHub Action workflows.
 
+To run the same scan locally:
+
+```bash
+SONAR_TOKEN=your-token ./sonarCloudLocal.sh
+```
+
+The script writes unresolved issues to `sonar-issues.json` and, when `python3`
+is available, a copy/paste friendly `sonar-issues.md`.
+
+To match the SonarCloud pull request summary view, pass the pull request key:
+
+```bash
+SONAR_TOKEN=your-token SONAR_PULL_REQUEST=1 ./sonarCloudLocal.sh
+```
+
 ### Dependabot
 
 We have added an example dependabot configuration file to the repository. You can enable it by renaming
