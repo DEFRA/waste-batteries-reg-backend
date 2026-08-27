@@ -1,6 +1,7 @@
 using WasteBatteriesRegBackend.ExampleData.Models;
 using WasteBatteriesRegBackend.ExampleData.Services;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,29 +23,31 @@ public static class ExampleDataEndpoints
     }
 
     private static async Task<Results<Ok<IReadOnlyCollection<ExampleDataModel>>, ValidationProblem>> GetAll(
-        [FromQuery] string? userId,
+        ClaimsPrincipal user,
         [FromServices] IExampleDataPersistence exampleDataPersistence,
         CancellationToken cancellationToken)
     {
-        if (userId is not null && string.IsNullOrWhiteSpace(userId))
+        var userId = GetUserId(user);
+        if (string.IsNullOrWhiteSpace(userId))
         {
             return TypedResults.ValidationProblem(new Dictionary<string, string[]>
             {
-                ["userId"] = ["userId must not be empty"]
+                ["userId"] = ["Authenticated user id must not be empty"]
             });
         }
 
-        var examples = await exampleDataPersistence.GetAllAsync(userId?.Trim(), cancellationToken);
+        var examples = await exampleDataPersistence.GetAllAsync(userId, cancellationToken);
         return TypedResults.Ok(examples);
     }
 
     private static async Task<Results<CreatedAtRoute<ExampleDataModel>, ValidationProblem>> Create(
         CreateExampleDataRequest request,
+        ClaimsPrincipal user,
         [FromServices] IExampleDataPersistence exampleDataPersistence,
         CancellationToken cancellationToken)
     {
         var exampleText = request.ExampleText.Trim();
-        var userId = request.UserId.Trim();
+        var userId = GetUserId(user);
 
         var errors = new Dictionary<string, string[]>();
         if (exampleText.Length == 0)
@@ -52,9 +55,9 @@ public static class ExampleDataEndpoints
             errors[nameof(request.ExampleText)] = ["ExampleText must not be empty"];
         }
 
-        if (userId.Length == 0)
+        if (string.IsNullOrWhiteSpace(userId))
         {
-            errors[nameof(request.UserId)] = ["UserId must not be empty"];
+            errors["userId"] = ["Authenticated user id must not be empty"];
         }
 
         if (errors.Count > 0)
@@ -62,17 +65,24 @@ public static class ExampleDataEndpoints
             return TypedResults.ValidationProblem(errors);
         }
 
-        var saved = await exampleDataPersistence.SaveAsync(exampleText, userId, cancellationToken);
+        var saved = await exampleDataPersistence.SaveAsync(exampleText, userId!, cancellationToken);
 
         return TypedResults.CreatedAtRoute(saved, "GetExampleDataById", new { exampleId = saved.Id });
     }
 
     private static async Task<Results<Ok<ExampleDataModel>, NotFound>> GetById(
         [FromRoute] string exampleId,
+        ClaimsPrincipal user,
         [FromServices] IExampleDataPersistence exampleDataPersistence,
         CancellationToken cancellationToken)
     {
+        var userId = GetUserId(user);
         var example = await exampleDataPersistence.GetByIdAsync(exampleId, cancellationToken);
-        return example is not null ? TypedResults.Ok(example) : TypedResults.NotFound();
+        return example is not null && example.UserId == userId ? TypedResults.Ok(example) : TypedResults.NotFound();
+    }
+
+    private static string? GetUserId(ClaimsPrincipal user)
+    {
+        return user.Identity?.Name ?? user.FindFirstValue("sub");
     }
 }

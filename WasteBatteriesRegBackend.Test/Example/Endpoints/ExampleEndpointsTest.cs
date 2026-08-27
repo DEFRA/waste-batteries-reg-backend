@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using WasteBatteriesRegBackend.Example.Models;
 using WasteBatteriesRegBackend.Example.Services;
+using WasteBatteriesRegBackend.Test.Utils;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -19,7 +20,7 @@ public class ExampleEndpointsTest
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         await using var factory = new TestApplicationFactory();
-        using var client = factory.CreateClient();
+        using var client = factory.CreateAuthenticatedClient();
 
         var response = await client.PostAsJsonAsync("/db-demo", new CreateExampleRequest
         {
@@ -37,7 +38,7 @@ public class ExampleEndpointsTest
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         await using var factory = new TestApplicationFactory();
-        using var client = factory.CreateClient();
+        using var client = factory.CreateAuthenticatedClient();
 
         var response = await client.PostAsJsonAsync("/db-demo", new CreateExampleRequest
         {
@@ -60,7 +61,7 @@ public class ExampleEndpointsTest
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         await using var factory = new TestApplicationFactory();
-        using var client = factory.CreateClient();
+        using var client = factory.CreateAuthenticatedClient();
 
         factory.MockPersistence
             .CreateAsync(Arg.Any<ExampleModel>(), Arg.Any<CancellationToken>())
@@ -86,7 +87,7 @@ public class ExampleEndpointsTest
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         await using var factory = new TestApplicationFactory();
-        using var client = factory.CreateClient();
+        using var client = factory.CreateAuthenticatedClient();
 
         factory.MockPersistence
             .UpdateAsync(Arg.Any<ExampleModel>(), Arg.Any<CancellationToken>())
@@ -106,7 +107,7 @@ public class ExampleEndpointsTest
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         await using var factory = new TestApplicationFactory();
-        using var client = factory.CreateClient();
+        using var client = factory.CreateAuthenticatedClient();
 
         await client.GetFromJsonAsync<List<ExampleModel>>("/db-demo?searchTerm=starter", cancellationToken);
         await factory.MockPersistence.Received().SearchAsync(Arg.Is("starter"), Arg.Any<CancellationToken>());
@@ -117,7 +118,7 @@ public class ExampleEndpointsTest
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         await using var factory = new TestApplicationFactory();
-        using var client = factory.CreateClient();
+        using var client = factory.CreateAuthenticatedClient();
 
         factory.MockPersistence
             .DeleteAsync(Arg.Is("alpha"), Arg.Any<CancellationToken>())
@@ -127,6 +128,18 @@ public class ExampleEndpointsTest
         await factory.MockPersistence.Received().DeleteAsync(Arg.Is("alpha"), Arg.Any<CancellationToken>());
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Api_endpoint_rejects_requests_without_a_bearer_token()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        await using var factory = new TestApplicationFactory();
+        using var client = factory.CreateClient();
+
+        var response = await client.GetAsync("/db-demo", cancellationToken);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
@@ -147,6 +160,8 @@ public class ExampleEndpointsTest
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureTestAuthentication();
+
             builder.ConfigureServices(services =>
             {
                 services.RemoveAll<IExamplePersistence>();

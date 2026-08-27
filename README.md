@@ -80,6 +80,14 @@ Run CDP-Deployments application:
 dotnet run --project WasteBatteriesRegBackend --launch-profile Development
 ```
 
+The backend requires a Defra ID access token in the `Authorization: Bearer <token>`
+header for every endpoint except `/health`. The token is validated against the
+configured OIDC metadata and audience.
+
+Local development uses the Defra ID stub values in `appsettings.Development.json`.
+Deployed environments must provide `Jwt__MetadataAddress` and `Jwt__Audience`
+configuration for the real Defra ID/API audience.
+
 ### SonarCloud
 
 Example SonarCloud configuration are available in the GitHub Action workflows.
