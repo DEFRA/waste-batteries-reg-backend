@@ -103,6 +103,9 @@ PY
           echo "SonarCloud processing finished with status: $task_status" >&2
           exit 1
           ;;
+        *)
+          echo "SonarCloud processing status: $task_status"
+          ;;
       esac
 
       sleep 2
