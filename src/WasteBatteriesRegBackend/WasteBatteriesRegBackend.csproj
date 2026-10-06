@@ -8,13 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\.dockerignore">
+    <Content Include="..\..\.dockerignore">
       <Link>.dockerignore</Link>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="WasteBatteriesRegBackend.Test" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Elastic.CommonSchema.Serilog" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
     <PackageReference Include="Elastic.Serilog.Enrichers.Web" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.HeaderPropagation" Version="10.0.12" />
@@ -26,6 +31,7 @@
     <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
   </ItemGroup>
 
 
