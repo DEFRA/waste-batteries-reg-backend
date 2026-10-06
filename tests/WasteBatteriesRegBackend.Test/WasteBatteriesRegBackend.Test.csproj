@@ -23,6 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WasteBatteriesRegBackend\WasteBatteriesRegBackend.csproj" />
+    <ProjectReference Include="..\..\src\WasteBatteriesRegBackend\WasteBatteriesRegBackend.csproj" />
   </ItemGroup>
 </Project>

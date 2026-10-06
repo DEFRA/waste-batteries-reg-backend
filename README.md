@@ -77,7 +77,7 @@ dotnet test
 
 Run CDP-Deployments application:
 ```bash
-dotnet run --project WasteBatteriesRegBackend --launch-profile Development
+dotnet run --project src/WasteBatteriesRegBackend --launch-profile Development
 ```
 
 The backend requires a Defra ID access token in the `Authorization: Bearer <token>`
