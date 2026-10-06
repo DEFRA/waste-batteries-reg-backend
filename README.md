@@ -81,8 +81,12 @@ dotnet run --project src/WasteBatteriesRegBackend --launch-profile Development
 ```
 
 The backend requires a Defra ID access token in the `Authorization: Bearer <token>`
-header for every endpoint except `/health`. The token is validated against the
-configured OIDC metadata and audience.
+header for every endpoint except `/health`, `/openapi/v1.json`, and `/swagger`.
+The token is validated against the configured OIDC metadata and audience.
+
+Outside Production, Swagger UI is available at `/swagger` and the OpenAPI
+document is available at `/openapi/v1.json`. Set `Swagger:Enabled` to `true`
+to turn the explorer on in Production.
 
 Local development uses the Defra ID stub values in `appsettings.Development.json`.
 Deployed environments must provide `Jwt__MetadataAddress` and `Jwt__Audience`

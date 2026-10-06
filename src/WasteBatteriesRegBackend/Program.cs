@@ -1,3 +1,4 @@
+using WasteBatteriesRegBackend.OpenApi;
 using WasteBatteriesRegBackend.Example.Endpoints;
 using WasteBatteriesRegBackend.Example.Services;
 using WasteBatteriesRegBackend.ExampleData.Endpoints;
@@ -60,6 +61,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     ConfigureMongo(services, configuration);
 
     services.AddHealthChecks();
+    services.AddApiOpenApi();
 
     // App services
     services.AddSingleton<IExamplePersistence, ExamplePersistence>();
@@ -154,6 +156,7 @@ static void ConfigureMiddleware(WebApplication app)
 static void ConfigureEndpoints(WebApplication app)
 {
     app.MapHealthChecks("/health", new HealthCheckOptions()).AllowAnonymous();
+    app.MapApiDocumentation();
 
     // Remove before deploying
     app.MapExampleEndpoints().RequireAuthorization();
