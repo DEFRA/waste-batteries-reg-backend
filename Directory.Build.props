@@ -1,0 +1,15 @@
+<Project>
+  <!--
+    Pins transitive packages to versions with no known vulnerabilities.
+    MSBuild imports this for every project in the repository.
+
+    Snappier >= 1.1.0 fixes https://github.com/advisories/GHSA-pggp-6c3x-2vxg
+    SharpCompress >= 0.48.0 fixes https://github.com/advisories/GHSA-6c8g-7p36-r338
+    Microsoft.OpenApi >= 2.7.5 fixes https://github.com/advisories/GHSA-v5pm-xwqc-g5wc
+  -->
+  <ItemGroup>
+    <PackageReference Include="Snappier" Version="1.3.1" />
+    <PackageReference Include="SharpCompress" Version="0.48.1" />
+    <PackageReference Include="Microsoft.OpenApi" Version="2.12.2" />
+  </ItemGroup>
+</Project>
