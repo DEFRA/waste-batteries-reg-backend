@@ -26,8 +26,10 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<ProxyHttpMessageHandler>();
 
-        // services.AddHttpClientWithTracing<IExampleClient, ExampleClient>();
-        // services.AddHttpClientWithProxy<IExternalClient, ExternalClient>();
+        // TODO: When the first real typed client is registered, add
+        // Microsoft.Extensions.Http.Resilience on that client, as waste-obligations
+        // does for its downstream clients. Register it with AddHttpClientWithTracing
+        // or AddHttpClientWithTracingAndProxy. Do not add resilience before a client exists.
 
         return services;
     }

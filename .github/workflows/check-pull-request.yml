@@ -40,6 +40,10 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      # TODO: Measure line and branch coverage, then fail this job below that baseline.
+      # The EPR backend gates on a measured baseline (about 92% line and 87% branch),
+      # not a fixed 90%. Much of this API is ExcludeFromCodeCoverage infrastructure,
+      # so set the threshold from the report rather than a round number.
       - run: dotnet test
 
   vulnerable-packages:

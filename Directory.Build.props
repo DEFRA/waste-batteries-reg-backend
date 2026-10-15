@@ -6,6 +6,9 @@
     Snappier >= 1.1.0 fixes https://github.com/advisories/GHSA-pggp-6c3x-2vxg
     SharpCompress >= 0.48.0 fixes https://github.com/advisories/GHSA-6c8g-7p36-r338
     Microsoft.OpenApi >= 2.7.5 fixes https://github.com/advisories/GHSA-v5pm-xwqc-g5wc
+
+    TODO: Add SonarAnalyzer.CSharp in its own ItemGroup, with PrivateAssets set to all,
+    as waste-obligations does. Keep that separate from the package pins above.
   -->
   <ItemGroup>
     <PackageReference Include="Snappier" Version="1.3.1" />
