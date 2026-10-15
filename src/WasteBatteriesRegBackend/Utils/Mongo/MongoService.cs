@@ -1,3 +1,4 @@
+using WasteBatteriesRegBackend.Utils.Logging;
 using MongoDB.Driver;
 using System.Diagnostics.CodeAnalysis;
 
@@ -28,8 +29,7 @@ public abstract class MongoService<T>
         var indexes = DefineIndexes(builder);
         if (indexes.Count == 0) return;
 
-        Logger.LogInformation(
-            "Ensuring index is created if it does not exist for collection {CollectionName} in DB {DatabaseName}",
+        Logger.EnsuringIndexes(
             Collection.CollectionNamespace.CollectionName,
             Collection.Database.DatabaseNamespace.DatabaseName);
         Collection.Indexes.CreateMany(indexes);

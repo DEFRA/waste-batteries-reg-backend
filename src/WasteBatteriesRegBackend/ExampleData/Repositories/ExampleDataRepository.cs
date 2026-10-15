@@ -3,6 +3,7 @@ using WasteBatteriesRegBackend.Utils.Mongo;
 using MongoDB.Driver;
 using System.Diagnostics.CodeAnalysis;
 using WasteBatteriesRegBackend.Utils.Auditing;
+using WasteBatteriesRegBackend.Utils.Logging;
 
 namespace WasteBatteriesRegBackend.ExampleData.Repositories;
 
@@ -35,10 +36,7 @@ public class ExampleDataRepository(IMongoDbClientFactory connectionFactory, ILog
     public async Task<ExampleDataModel?> GetByIdAsync(string exampleId, CancellationToken cancellationToken = default)
     {
         var result = await Collection.Find(e => e.Id == exampleId).FirstOrDefaultAsync(cancellationToken);
-        if (Logger.IsEnabled(LogLevel.Information))
-        {
-            Logger.LogInformation("Searching for {ExampleId}, found {Result}", exampleId, result);
-        }
+        Logger.SearchingForExampleData(exampleId, result);
 
         return result;
     }

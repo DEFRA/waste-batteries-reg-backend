@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using WasteBatteriesRegBackend.Utils.Logging;
 
 namespace WasteBatteriesRegBackend.Utils.Http;
 
@@ -13,13 +14,13 @@ public class ProxyHttpMessageHandler : HttpClientHandler
         var proxy = new WebProxy { BypassProxyOnLocal = true };
         if (proxyUri != null)
         {
-            logger.LogDebug("Creating proxy http client");
+            logger.CreatingProxyHttpClient();
             var uri = new UriBuilder(proxyUri).Uri;
             proxy.Address = uri;
         }
         else
         {
-            logger.LogWarning("HTTP_PROXY is NOT set, proxy client will be disabled");
+            logger.ProxyNotConfigured();
         }
 
         Proxy = proxy;

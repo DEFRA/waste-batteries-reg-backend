@@ -45,6 +45,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     // Trust material must be loaded before anything creates outbound connections.
     services.LoadCustomTrustStoreFromEnvironment();
 
+    services.AddExceptionHandler<ExceptionLoggingHandler>();
     services.AddProblemDetails();
     services.AddValidation();
     services.AddHttpContextAccessor();
@@ -63,6 +64,9 @@ static void ConfigureServices(WebApplicationBuilder builder)
 [ExcludeFromCodeCoverage]
 static void ConfigureMiddleware(WebApplication app)
 {
+    // First, so an exception from any later middleware becomes problem details
+    // and is logged once as a structured error.
+    app.UseExceptionHandler();
     app.UseSerilogRequestLogging();
     app.UseHeaderPropagation();
     app.UseAuthentication();
