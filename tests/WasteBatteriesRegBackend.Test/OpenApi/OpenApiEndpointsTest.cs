@@ -22,6 +22,11 @@ public class OpenApiEndpointsTest
         var document = await response.Content.ReadAsStringAsync(cancellationToken);
         Assert.Contains("/db-demo", document, StringComparison.Ordinal);
         Assert.Contains("/example", document, StringComparison.Ordinal);
+        using var json = JsonDocument.Parse(document);
+        var info = json.RootElement.GetProperty("info");
+        Assert.Equal("Waste Batteries Registration API", info.GetProperty("title").GetString());
+        Assert.Equal("v1", info.GetProperty("version").GetString());
+        Assert.Equal("Manage waste batteries registration.", info.GetProperty("description").GetString());
     }
 
     [Fact]

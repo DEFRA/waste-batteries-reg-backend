@@ -15,7 +15,7 @@ public static class WebApplicationExtensions
         {
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/openapi/v1.json", "Waste Batteries Registration API");
+                options.SwaggerEndpoint("/openapi/v1.json", BearerSecuritySchemeTransformer.DocumentTitle);
                 options.RoutePrefix = "swagger";
             });
 

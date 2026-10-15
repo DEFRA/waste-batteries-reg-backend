@@ -7,12 +7,20 @@ namespace WasteBatteriesRegBackend.OpenApi;
 public sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransformer, IOpenApiOperationTransformer
 {
     public const string SchemeId = "Bearer";
+    public const string DocumentTitle = "Waste Batteries Registration API";
 
     public Task TransformAsync(
         OpenApiDocument document,
         OpenApiDocumentTransformerContext context,
         CancellationToken cancellationToken)
     {
+        document.Info = new OpenApiInfo
+        {
+            Title = DocumentTitle,
+            Version = "v1",
+            Description = "Manage waste batteries registration."
+        };
+
         document.Components ??= new OpenApiComponents();
         document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
         document.Components.SecuritySchemes[SchemeId] = new OpenApiSecurityScheme

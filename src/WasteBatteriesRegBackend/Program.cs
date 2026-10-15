@@ -67,6 +67,10 @@ static void ConfigureMiddleware(WebApplication app)
     // First, so an exception from any later middleware becomes problem details
     // and is logged once as a structured error.
     app.UseExceptionHandler();
+    // TODO: Call UseStatusCodePages() immediately after UseExceptionHandler, as the
+    // EPR backend does, so a status with no body (such as an unknown route) is written
+    // as problem details. Check that /health, Swagger UI, and the JWT challenge still
+    // return their own responses, because status-code pages only fill an empty body.
     app.UseSerilogRequestLogging();
     app.UseHeaderPropagation();
     app.UseAuthentication();

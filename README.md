@@ -66,12 +66,11 @@ You can use the CDP Terminal to access the environments' MongoDB.
 
 Run the tests with:
 
-Tests run by running a full `WebApplication` backed by [Ephemeral MongoDB](https://github.com/asimmon/ephemeral-mongo).
-Tests do not use mocking of any sort and read and write from the in-memory database.
-
 ```bash
 dotnet test
-````
+```
+
+HTTP tests host the API in process with `WebApplicationFactory`. Repositories and other collaborators are substituted with NSubstitute. The tests do not start MongoDB.
 
 ### Running
 
