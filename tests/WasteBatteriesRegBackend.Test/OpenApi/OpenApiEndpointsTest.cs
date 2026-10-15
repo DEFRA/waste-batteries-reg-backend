@@ -1,6 +1,8 @@
 using System.Net;
+using System.Text.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using WasteBatteriesRegBackend.OpenApi;
 using WasteBatteriesRegBackend.Test.Utils;
 
 namespace WasteBatteriesRegBackend.Test.OpenApi;
@@ -20,6 +22,29 @@ public class OpenApiEndpointsTest
         var document = await response.Content.ReadAsStringAsync(cancellationToken);
         Assert.Contains("/db-demo", document, StringComparison.Ordinal);
         Assert.Contains("/example", document, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task OpenApi_document_defines_a_bearer_scheme_on_authorized_operations()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        await using var factory = new TestApplicationFactory();
+        using var client = factory.CreateClient();
+
+        var response = await client.GetAsync("/openapi/v1.json", cancellationToken);
+        var document = await response.Content.ReadAsStringAsync(cancellationToken);
+        using var json = JsonDocument.Parse(document);
+        var root = json.RootElement;
+
+        var bearer = root.GetProperty("components").GetProperty("securitySchemes").GetProperty(BearerSecuritySchemeTransformer.SchemeId);
+        Assert.Equal("http", bearer.GetProperty("type").GetString());
+        Assert.Equal("bearer", bearer.GetProperty("scheme").GetString());
+        Assert.Equal("JWT", bearer.GetProperty("bearerFormat").GetString());
+        Assert.Equal(
+            BearerSecuritySchemeTransformer.SchemeId,
+            root.GetProperty("security")[0].EnumerateObject().Single().Name);
+        Assert.False(root.GetProperty("paths").GetProperty("/db-demo").GetProperty("post").TryGetProperty("security", out _));
+        Assert.False(root.GetProperty("paths").GetProperty("/example").GetProperty("get").TryGetProperty("security", out _));
     }
 
     [Fact]

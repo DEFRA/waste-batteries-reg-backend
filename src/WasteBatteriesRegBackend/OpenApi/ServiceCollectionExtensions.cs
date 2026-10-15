@@ -7,7 +7,11 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApiOpenApi(this IServiceCollection services)
     {
-        services.AddOpenApi();
+        services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+            options.AddOperationTransformer<BearerSecuritySchemeTransformer>();
+        });
         return services;
     }
 }
