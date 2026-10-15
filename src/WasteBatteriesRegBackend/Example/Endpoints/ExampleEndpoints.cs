@@ -1,8 +1,11 @@
-using WasteBatteriesRegBackend.Example.Models;
-using WasteBatteriesRegBackend.Example.Services;
-using System.Diagnostics.CodeAnalysis;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
+using WasteBatteriesRegBackend.Endpoints;
+using WasteBatteriesRegBackend.Example;
+using WasteBatteriesRegBackend.Example.Models;
+using WasteBatteriesRegBackend.Example.Services;
 
 namespace WasteBatteriesRegBackend.Example.Endpoints;
 
@@ -23,82 +26,72 @@ public static class ExampleEndpoints
         return group;
     }
 
-    private static async Task<Results<CreatedAtRoute<ExampleModel>, Conflict<ProblemDetails>>> Create(
+    private static async Task<Results<CreatedAtRoute<ExampleModel>, Conflict<ProblemDetails>, ValidationProblem>> Create(
         CreateExampleRequest request,
-        [FromServices] IExamplePersistence examplePersistence,
+        [FromServices] IExampleService exampleService,
         CancellationToken cancellationToken)
     {
-        var example = new ExampleModel
-        {
-            Name = request.Name,
-            Value = request.Value,
-            Counter = request.Counter
-        };
-
         try
         {
-            await examplePersistence.CreateAsync(example, cancellationToken);
+            var example = await exampleService.CreateAsync(request, cancellationToken);
+            return TypedResults.CreatedAtRoute(example, "GetByName", new { name = example.Name });
         }
-        catch (ExampleConflictException ex)
+        catch (ValidationException exception)
+        {
+            return ValidationExceptionResults.ToProblem(exception);
+        }
+        catch (ExampleConflictException exception)
         {
             return TypedResults.Conflict(new ProblemDetails
             {
                 Title = "Example already exists",
-                Detail = ex.Message,
+                Detail = exception.Message,
                 Status = StatusCodes.Status409Conflict
             });
         }
-
-        return TypedResults.CreatedAtRoute(example, "GetByName", new { name = example.Name });
     }
 
     private static async Task<Ok<IReadOnlyCollection<ExampleModel>>> GetAll(
         [FromQuery] string? searchTerm,
-        [FromServices] IExamplePersistence examplePersistence,
+        [FromServices] IExampleService exampleService,
         CancellationToken cancellationToken)
     {
-        if (searchTerm is not null && !string.IsNullOrWhiteSpace(searchTerm))
-        {
-            var matched = await examplePersistence.SearchAsync(searchTerm, cancellationToken);
-            return TypedResults.Ok(matched);
-        }
-
-        var matches = await examplePersistence.GetAllAsync(cancellationToken);
+        var matches = await exampleService.GetAllAsync(searchTerm, cancellationToken);
         return TypedResults.Ok(matches);
     }
 
     private static async Task<Results<Ok<ExampleModel>, NotFound>> GetByName(
         [FromRoute] string name,
-        [FromServices] IExamplePersistence examplePersistence,
+        [FromServices] IExampleService exampleService,
         CancellationToken cancellationToken)
     {
-        var example = await examplePersistence.GetByNameAsync(name, cancellationToken);
+        var example = await exampleService.GetByNameAsync(name, cancellationToken);
         return example is not null ? TypedResults.Ok(example) : TypedResults.NotFound();
     }
 
-    private static async Task<Results<Ok<ExampleModel>, NotFound>> Update(
+    private static async Task<Results<Ok<ExampleModel>, NotFound, ValidationProblem>> Update(
         [FromRoute] string name,
         UpdateExampleRequest request,
-        [FromServices] IExamplePersistence examplePersistence,
+        [FromServices] IExampleService exampleService,
         CancellationToken cancellationToken)
     {
-        var example = new ExampleModel
+        try
         {
-            Name = name,
-            Value = request.Value,
-            Counter = request.Counter
-        };
-
-        var updated = await examplePersistence.UpdateAsync(example, cancellationToken);
-        return updated is not null ? TypedResults.Ok(updated) : TypedResults.NotFound();
+            var updated = await exampleService.UpdateAsync(name, request, cancellationToken);
+            return updated is not null ? TypedResults.Ok(updated) : TypedResults.NotFound();
+        }
+        catch (ValidationException exception)
+        {
+            return ValidationExceptionResults.ToProblem(exception);
+        }
     }
 
     private static async Task<Results<NoContent, NotFound>> Delete(
         [FromRoute] string name,
-        [FromServices] IExamplePersistence examplePersistence,
+        [FromServices] IExampleService exampleService,
         CancellationToken cancellationToken)
     {
-        var deleted = await examplePersistence.DeleteAsync(name, cancellationToken);
+        var deleted = await exampleService.DeleteAsync(name, cancellationToken);
         return deleted ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 }

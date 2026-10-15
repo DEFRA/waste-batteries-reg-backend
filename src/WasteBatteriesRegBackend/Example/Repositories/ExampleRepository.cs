@@ -1,3 +1,4 @@
+using WasteBatteriesRegBackend.Example;
 using WasteBatteriesRegBackend.Example.Models;
 using WasteBatteriesRegBackend.Utils.Mongo;
 using MongoDB.Bson;
@@ -6,9 +7,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using WasteBatteriesRegBackend.Utils.Auditing;
 
-namespace WasteBatteriesRegBackend.Example.Services;
+namespace WasteBatteriesRegBackend.Example.Repositories;
 
-public interface IExamplePersistence
+public interface IExampleRepository
 {
     Task CreateAsync(ExampleModel example, CancellationToken cancellationToken = default);
 
@@ -25,8 +26,8 @@ public interface IExamplePersistence
 
 
 [ExcludeFromCodeCoverage]
-public class ExamplePersistence(IMongoDbClientFactory connectionFactory, ILoggerFactory loggerFactory)
-    : MongoService<ExampleModel>(connectionFactory, "example", loggerFactory), IExamplePersistence
+public class ExampleRepository(IMongoDbClientFactory connectionFactory, ILoggerFactory loggerFactory)
+    : MongoService<ExampleModel>(connectionFactory, "example", loggerFactory), IExampleRepository
 {
     public async Task CreateAsync(ExampleModel example, CancellationToken cancellationToken = default)
     {

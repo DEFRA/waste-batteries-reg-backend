@@ -1,9 +1,11 @@
-using WasteBatteriesRegBackend.ExampleData.Models;
-using WasteBatteriesRegBackend.ExampleData.Services;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using WasteBatteriesRegBackend.Endpoints;
+using WasteBatteriesRegBackend.ExampleData.Models;
+using WasteBatteriesRegBackend.ExampleData.Services;
 
 namespace WasteBatteriesRegBackend.ExampleData.Endpoints;
 
@@ -24,61 +26,45 @@ public static class ExampleDataEndpoints
 
     private static async Task<Results<Ok<IReadOnlyCollection<ExampleDataModel>>, ValidationProblem>> GetAll(
         ClaimsPrincipal user,
-        [FromServices] IExampleDataPersistence exampleDataPersistence,
+        [FromServices] IExampleDataService exampleDataService,
         CancellationToken cancellationToken)
     {
-        var userId = GetUserId(user);
-        if (string.IsNullOrWhiteSpace(userId))
+        try
         {
-            return TypedResults.ValidationProblem(new Dictionary<string, string[]>
-            {
-                ["userId"] = ["Authenticated user id must not be empty"]
-            });
+            var examples = await exampleDataService.GetAllAsync(GetUserId(user), cancellationToken);
+            return TypedResults.Ok(examples);
         }
-
-        var examples = await exampleDataPersistence.GetAllAsync(userId, cancellationToken);
-        return TypedResults.Ok(examples);
+        catch (ValidationException exception)
+        {
+            return ValidationExceptionResults.ToProblem(exception);
+        }
     }
 
     private static async Task<Results<CreatedAtRoute<ExampleDataModel>, ValidationProblem>> Create(
         CreateExampleDataRequest request,
         ClaimsPrincipal user,
-        [FromServices] IExampleDataPersistence exampleDataPersistence,
+        [FromServices] IExampleDataService exampleDataService,
         CancellationToken cancellationToken)
     {
-        var exampleText = request.ExampleText.Trim();
-        var userId = GetUserId(user);
-
-        var errors = new Dictionary<string, string[]>();
-        if (exampleText.Length == 0)
+        try
         {
-            errors[nameof(request.ExampleText)] = ["ExampleText must not be empty"];
+            var saved = await exampleDataService.CreateAsync(request, GetUserId(user), cancellationToken);
+            return TypedResults.CreatedAtRoute(saved, "GetExampleDataById", new { exampleId = saved.Id });
         }
-
-        if (string.IsNullOrWhiteSpace(userId))
+        catch (ValidationException exception)
         {
-            errors["userId"] = ["Authenticated user id must not be empty"];
+            return ValidationExceptionResults.ToProblem(exception);
         }
-
-        if (errors.Count > 0)
-        {
-            return TypedResults.ValidationProblem(errors);
-        }
-
-        var saved = await exampleDataPersistence.SaveAsync(exampleText, userId!, cancellationToken);
-
-        return TypedResults.CreatedAtRoute(saved, "GetExampleDataById", new { exampleId = saved.Id });
     }
 
     private static async Task<Results<Ok<ExampleDataModel>, NotFound>> GetById(
         [FromRoute] string exampleId,
         ClaimsPrincipal user,
-        [FromServices] IExampleDataPersistence exampleDataPersistence,
+        [FromServices] IExampleDataService exampleDataService,
         CancellationToken cancellationToken)
     {
-        var userId = GetUserId(user);
-        var example = await exampleDataPersistence.GetByIdAsync(exampleId, cancellationToken);
-        return example is not null && example.UserId == userId ? TypedResults.Ok(example) : TypedResults.NotFound();
+        var example = await exampleDataService.GetByIdAsync(exampleId, GetUserId(user), cancellationToken);
+        return example is not null ? TypedResults.Ok(example) : TypedResults.NotFound();
     }
 
     private static string? GetUserId(ClaimsPrincipal user)

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using WasteBatteriesRegBackend.ExampleData.Models;
-using WasteBatteriesRegBackend.ExampleData.Services;
+using WasteBatteriesRegBackend.ExampleData.Repositories;
 using WasteBatteriesRegBackend.Test.Utils;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -245,7 +245,7 @@ public class ExampleDataEndpointsTest
 
     private sealed class TestApplicationFactory : WebApplicationFactory<Program>
     {
-        public readonly IExampleDataPersistence MockPersistence = Substitute.For<IExampleDataPersistence>();
+        public readonly IExampleDataRepository MockPersistence = Substitute.For<IExampleDataRepository>();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -253,7 +253,7 @@ public class ExampleDataEndpointsTest
 
             builder.ConfigureServices(services =>
             {
-                services.RemoveAll<IExampleDataPersistence>();
+                services.RemoveAll<IExampleDataRepository>();
                 services.AddSingleton(MockPersistence);
             });
         }

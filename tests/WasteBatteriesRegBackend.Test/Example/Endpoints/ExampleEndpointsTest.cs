@@ -1,7 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
 using WasteBatteriesRegBackend.Example.Models;
-using WasteBatteriesRegBackend.Example.Services;
+using WasteBatteriesRegBackend.Example;
+using WasteBatteriesRegBackend.Example.Repositories;
 using WasteBatteriesRegBackend.Test.Utils;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -103,6 +104,27 @@ public class ExampleEndpointsTest
     }
 
     [Fact]
+    public async Task Put_returns_validation_problem_details_for_invalid_request()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        await using var factory = new TestApplicationFactory();
+        using var client = factory.CreateAuthenticatedClient();
+
+        var response = await client.PutAsJsonAsync("/db-demo/alpha", new UpdateExampleRequest
+        {
+            Value = string.Empty,
+            Counter = -1
+        }, cancellationToken);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(cancellationToken);
+        Assert.NotNull(problem);
+        Assert.Contains(nameof(UpdateExampleRequest.Value), problem.Errors.Keys);
+        Assert.Contains(nameof(UpdateExampleRequest.Counter), problem.Errors.Keys);
+    }
+
+    [Fact]
     public async Task Get_supports_search_term_filter()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
@@ -156,7 +178,7 @@ public class ExampleEndpointsTest
 
     private sealed class TestApplicationFactory : WebApplicationFactory<Program>
     {
-        public readonly IExamplePersistence MockPersistence = Substitute.For<IExamplePersistence>();
+        public readonly IExampleRepository MockPersistence = Substitute.For<IExampleRepository>();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -164,7 +186,7 @@ public class ExampleEndpointsTest
 
             builder.ConfigureServices(services =>
             {
-                services.RemoveAll<IExamplePersistence>();
+                services.RemoveAll<IExampleRepository>();
                 services.AddSingleton(MockPersistence);
             });
         }

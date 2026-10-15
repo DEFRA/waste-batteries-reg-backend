@@ -4,9 +4,9 @@ using MongoDB.Driver;
 using System.Diagnostics.CodeAnalysis;
 using WasteBatteriesRegBackend.Utils.Auditing;
 
-namespace WasteBatteriesRegBackend.ExampleData.Services;
+namespace WasteBatteriesRegBackend.ExampleData.Repositories;
 
-public interface IExampleDataPersistence
+public interface IExampleDataRepository
 {
     Task<IReadOnlyCollection<ExampleDataModel>> GetAllAsync(string? userId, CancellationToken cancellationToken = default);
 
@@ -17,8 +17,8 @@ public interface IExampleDataPersistence
 
 
 [ExcludeFromCodeCoverage]
-public class ExampleDataPersistence(IMongoDbClientFactory connectionFactory, ILoggerFactory loggerFactory)
-    : MongoService<ExampleDataModel>(connectionFactory, "example-data", loggerFactory), IExampleDataPersistence
+public class ExampleDataRepository(IMongoDbClientFactory connectionFactory, ILoggerFactory loggerFactory)
+    : MongoService<ExampleDataModel>(connectionFactory, "example-data", loggerFactory), IExampleDataRepository
 {
     public async Task<IReadOnlyCollection<ExampleDataModel>> GetAllAsync(string? userId, CancellationToken cancellationToken = default)
     {
