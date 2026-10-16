@@ -125,6 +125,41 @@ public class ExampleEndpointsTest
     }
 
     [Fact]
+    public async Task Get_by_name_returns_the_example()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        await using var factory = new TestApplicationFactory();
+        using var client = factory.CreateAuthenticatedClient();
+
+        factory.MockPersistence
+            .GetByNameAsync(Arg.Is("alpha"), Arg.Any<CancellationToken>())
+            .Returns(new ExampleModel { Name = "alpha", Value = "first value", Counter = 2 });
+
+        var example = await client.GetFromJsonAsync<ExampleModel>("/db-demo/alpha", cancellationToken);
+
+        Assert.NotNull(example);
+        Assert.Equal("alpha", example.Name);
+        Assert.Equal("first value", example.Value);
+        Assert.Equal(2, example.Counter);
+    }
+
+    [Fact]
+    public async Task Get_by_name_returns_not_found_when_the_example_is_missing()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        await using var factory = new TestApplicationFactory();
+        using var client = factory.CreateAuthenticatedClient();
+
+        factory.MockPersistence
+            .GetByNameAsync(Arg.Is("missing"), Arg.Any<CancellationToken>())
+            .Returns((ExampleModel?)null);
+
+        var response = await client.GetAsync("/db-demo/missing", cancellationToken);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
     public async Task Get_supports_search_term_filter()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
