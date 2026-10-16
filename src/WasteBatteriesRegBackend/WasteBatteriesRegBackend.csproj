@@ -14,16 +14,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="WasteBatteriesRegBackend.Test" />
+    <InternalsVisibleTo Include="WasteBatteriesRegBackend.Tests.Unit" />
+    <InternalsVisibleTo Include="WasteBatteriesRegBackend.Tests.Integration" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation" Version="12.2.0" />
     <PackageReference Include="Elastic.CommonSchema.Serilog" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.13" />
     <PackageReference Include="Elastic.Serilog.Enrichers.Web" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
-    <PackageReference Include="Microsoft.AspNetCore.HeaderPropagation" Version="10.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.HeaderPropagation" Version="10.0.13" />
     <PackageReference Include="MongoDB.Driver" Version="3.12.0" />
     <PackageReference Include="MongoDB.Driver.Authentication.AWS" Version="3.12.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
@@ -32,7 +33,7 @@
     <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.3.0" />
   </ItemGroup>
 
 

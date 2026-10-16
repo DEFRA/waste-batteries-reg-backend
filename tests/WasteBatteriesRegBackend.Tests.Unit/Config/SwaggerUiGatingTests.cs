@@ -3,7 +3,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using WasteBatteriesRegBackend.Config;
 
-namespace WasteBatteriesRegBackend.Test.Config;
+namespace WasteBatteriesRegBackend.Tests.Unit.Config;
 
 public class SwaggerUiGatingTests
 {
@@ -37,7 +37,7 @@ public class SwaggerUiGatingTests
     {
         public string EnvironmentName { get; set; } = environmentName;
 
-        public string ApplicationName { get; set; } = "WasteBatteriesRegBackend.Test";
+        public string ApplicationName { get; set; } = "WasteBatteriesRegBackend.Tests.Unit";
 
         public string ContentRootPath { get; set; } = AppContext.BaseDirectory;
 

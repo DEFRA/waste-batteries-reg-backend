@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using WasteBatteriesRegBackend.Example.Models;
 using WasteBatteriesRegBackend.Example;
 using WasteBatteriesRegBackend.Example.Repositories;
-using WasteBatteriesRegBackend.Test.Utils;
+using WasteBatteriesRegBackend.Tests.Integration.Utils;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace WasteBatteriesRegBackend.Test.Example.Endpoints;
+namespace WasteBatteriesRegBackend.Tests.Integration.Example.Endpoints;
 
 public class ExampleEndpointsTest
 {

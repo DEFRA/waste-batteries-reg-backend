@@ -3,9 +3,9 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using WasteBatteriesRegBackend.OpenApi;
-using WasteBatteriesRegBackend.Test.Utils;
+using WasteBatteriesRegBackend.Tests.Integration.Utils;
 
-namespace WasteBatteriesRegBackend.Test.OpenApi;
+namespace WasteBatteriesRegBackend.Tests.Integration.OpenApi;
 
 public class OpenApiEndpointsTest
 {

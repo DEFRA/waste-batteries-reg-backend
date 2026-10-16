@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace WasteBatteriesRegBackend.Test.Utils;
+namespace WasteBatteriesRegBackend.Tests.Integration.Utils;
 
 public static class TestAuthentication
 {

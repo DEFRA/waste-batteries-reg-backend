@@ -2,7 +2,7 @@ using System.Text.Json;
 using WasteBatteriesRegBackend.ExampleData.Models;
 using WasteBatteriesRegBackend.ExampleData.Validators;
 
-namespace WasteBatteriesRegBackend.Test.ExampleData.Models;
+namespace WasteBatteriesRegBackend.Tests.Unit.ExampleData.Models;
 
 public class CreateExampleDataRequestTest
 {

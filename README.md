@@ -70,7 +70,9 @@ Run the tests with:
 dotnet test
 ```
 
-HTTP tests host the API in process with `WebApplicationFactory`. Repositories and other collaborators are substituted with NSubstitute. The tests do not start MongoDB.
+`WasteBatteriesRegBackend.Tests.Unit` covers validators, configuration gating, and handlers without hosting the API.
+
+`WasteBatteriesRegBackend.Tests.Integration` hosts the API in process with `WebApplicationFactory`. Repositories and other collaborators are substituted with NSubstitute. The tests do not start MongoDB.
 
 ### Running
 
