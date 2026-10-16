@@ -66,23 +66,28 @@ You can use the CDP Terminal to access the environments' MongoDB.
 
 Run the tests with:
 
-Tests run by running a full `WebApplication` backed by [Ephemeral MongoDB](https://github.com/asimmon/ephemeral-mongo).
-Tests do not use mocking of any sort and read and write from the in-memory database.
-
 ```bash
 dotnet test
-````
+```
+
+`WasteBatteriesRegBackend.Tests.Unit` covers validators, configuration gating, and handlers without hosting the API.
+
+`WasteBatteriesRegBackend.Tests.Integration` hosts the API in process with `WebApplicationFactory`. Repositories and other collaborators are substituted with NSubstitute. The tests do not start MongoDB.
 
 ### Running
 
 Run CDP-Deployments application:
 ```bash
-dotnet run --project WasteBatteriesRegBackend --launch-profile Development
+dotnet run --project src/WasteBatteriesRegBackend --launch-profile Development
 ```
 
 The backend requires a Defra ID access token in the `Authorization: Bearer <token>`
-header for every endpoint except `/health`. The token is validated against the
-configured OIDC metadata and audience.
+header for every endpoint except `/health`, `/openapi/v1.json`, and `/swagger`.
+The token is validated against the configured OIDC metadata and audience.
+
+Outside Production, Swagger UI is available at `/swagger` and the OpenAPI
+document is available at `/openapi/v1.json`. Set `Swagger:Enabled` to `true`
+to turn the explorer on in Production.
 
 Local development uses the Defra ID stub values in `appsettings.Development.json`.
 Deployed environments must provide `Jwt__MetadataAddress` and `Jwt__Audience`
