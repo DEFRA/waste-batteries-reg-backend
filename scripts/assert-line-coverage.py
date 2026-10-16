@@ -17,30 +17,72 @@ def children(element: ET.Element, name: str) -> list[ET.Element]:
 
 
 def line_coverage(path: str) -> tuple[int, int]:
-    root = ET.parse(path).getroot()
     covered = 0
     total = 0
-    package_lists = children(root, "packages")
-    if not package_lists:
-        return covered, total
-
-    for package in children(package_lists[0], "package"):
-        if package.get("name") != "WasteBatteriesRegBackend":
-            continue
-
-        for classes in children(package, "classes"):
-            for cls in children(classes, "class"):
-                filename = (cls.get("filename") or "").replace("\\", "/")
-                if "/obj/" in f"/{filename}":
-                    continue
-
-                for lines in children(cls, "lines"):
-                    for line in children(lines, "line"):
-                        total += 1
-                        if int(line.get("hits") or "0") > 0:
-                            covered += 1
+    for package in production_packages(ET.parse(path).getroot()):
+        package_covered, package_total = package_line_coverage(package)
+        covered += package_covered
+        total += package_total
 
     return covered, total
+
+
+def production_packages(root: ET.Element) -> list[ET.Element]:
+    package_lists = children(root, "packages")
+    if not package_lists:
+        return []
+
+    return [
+        package
+        for package in children(package_lists[0], "package")
+        if package.get("name") == "WasteBatteriesRegBackend"
+    ]
+
+
+def package_line_coverage(package: ET.Element) -> tuple[int, int]:
+    covered = 0
+    total = 0
+    for classes in children(package, "classes"):
+        for cls in children(classes, "class"):
+            class_covered, class_total = class_line_coverage(cls)
+            covered += class_covered
+            total += class_total
+
+    return covered, total
+
+
+def class_line_coverage(cls: ET.Element) -> tuple[int, int]:
+    if is_generated(cls.get("filename")):
+        return 0, 0
+
+    covered = 0
+    total = 0
+    for line in coverage_lines(cls):
+        total += 1
+        if line_was_hit(line):
+            covered += 1
+
+    return covered, total
+
+
+def coverage_lines(cls: ET.Element) -> list[ET.Element]:
+    found: list[ET.Element] = []
+    for lines in children(cls, "lines"):
+        found.extend(children(lines, "line"))
+
+    return found
+
+
+def is_generated(filename: str | None) -> bool:
+    normalized = (filename or "").replace("\\", "/")
+
+    return "/obj/" in f"/{normalized}"
+
+
+def line_was_hit(line: ET.Element) -> bool:
+    hits = line.get("hits") or "0"
+
+    return int(hits) > 0
 
 
 def main() -> int:
