@@ -64,10 +64,18 @@ You can use the CDP Terminal to access the environments' MongoDB.
 
 ### Testing
 
-Run the tests with:
+Build the Debug assemblies, then run them directly:
 
 ```bash
-dotnet test
+dotnet build --configuration Debug
+bash scripts/run-tests.sh
+```
+
+`dotnet test` uses the testing-platform server and currently reports that zero tests ran. The pull request workflow builds Debug and runs `scripts/run-tests.sh`. On PowerShell, run the two assemblies the script launches:
+
+```powershell
+dotnet tests/WasteBatteriesRegBackend.Tests.Unit/bin/Debug/net10.0/WasteBatteriesRegBackend.Tests.Unit.dll
+dotnet tests/WasteBatteriesRegBackend.Tests.Integration/bin/Debug/net10.0/WasteBatteriesRegBackend.Tests.Integration.dll
 ```
 
 `WasteBatteriesRegBackend.Tests.Unit` covers validators, configuration gating, and handlers without hosting the API.
