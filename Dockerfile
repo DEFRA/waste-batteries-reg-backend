@@ -3,7 +3,11 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY . .
 WORKDIR "/src"
-RUN dotnet test WasteBatteriesRegBackend.slnx
+# `dotnet test` uses the testing-platform server and currently reports that zero
+# tests ran. Launch the Debug assemblies directly, as scripts/run-tests.sh does.
+RUN dotnet build WasteBatteriesRegBackend.slnx -c Debug \
+ && dotnet tests/WasteBatteriesRegBackend.Tests.Unit/bin/Debug/net10.0/WasteBatteriesRegBackend.Tests.Unit.dll \
+ && dotnet tests/WasteBatteriesRegBackend.Tests.Integration/bin/Debug/net10.0/WasteBatteriesRegBackend.Tests.Integration.dll
 RUN dotnet publish src/WasteBatteriesRegBackend -c Release -o /app/publish /p:UseAppHost=false
 
 # Final production image
