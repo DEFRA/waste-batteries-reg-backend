@@ -74,7 +74,7 @@ static void ConfigureMiddleware(WebApplication app)
     // Unexpected exceptions are logged as errors. Validation failures are logged
     // as information and returned as a validation problem.
     app.UseExceptionHandler();
-    // TODO: Call UseStatusCodePages() immediately after UseExceptionHandler, as the
+    // TEMPORARY: Call UseStatusCodePages() immediately after UseExceptionHandler, as the
     // EPR backend does, so a status with no body (such as an unknown route) is written
     // as problem details. Check that /health, Swagger UI, and the JWT challenge still
     // return their own responses, because status-code pages only fill an empty body.
