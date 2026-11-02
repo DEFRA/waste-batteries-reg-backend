@@ -1,7 +1,7 @@
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Diagnostics.CodeAnalysis;
 using WasteBatteriesRegBackend.Config;
-using Microsoft.Extensions.Options;
 
 namespace WasteBatteriesRegBackend.Utils.Mongo;
 

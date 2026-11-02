@@ -1,3 +1,4 @@
+using Serilog;
 using System.Diagnostics.CodeAnalysis;
 using WasteBatteriesRegBackend.Authentication;
 using WasteBatteriesRegBackend.Endpoints;
@@ -9,7 +10,6 @@ using WasteBatteriesRegBackend.Utils.Health;
 using WasteBatteriesRegBackend.Utils.Http;
 using WasteBatteriesRegBackend.Utils.Logging;
 using WasteBatteriesRegBackend.Utils.Mongo;
-using Serilog;
 
 var app = BuildApp(args);
 await app.RunAsync();

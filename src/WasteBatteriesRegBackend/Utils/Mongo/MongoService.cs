@@ -1,6 +1,6 @@
-using WasteBatteriesRegBackend.Utils.Logging;
 using MongoDB.Driver;
 using System.Diagnostics.CodeAnalysis;
+using WasteBatteriesRegBackend.Utils.Logging;
 
 namespace WasteBatteriesRegBackend.Utils.Mongo;
 

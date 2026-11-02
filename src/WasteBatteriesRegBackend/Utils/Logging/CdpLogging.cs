@@ -1,7 +1,7 @@
-using System.Diagnostics.CodeAnalysis;
-using WasteBatteriesRegBackend.Utils.Auditing;
 using Elastic.Serilog.Enrichers.Web;
 using Serilog;
+using System.Diagnostics.CodeAnalysis;
+using WasteBatteriesRegBackend.Utils.Auditing;
 
 namespace WasteBatteriesRegBackend.Utils.Logging;
 
