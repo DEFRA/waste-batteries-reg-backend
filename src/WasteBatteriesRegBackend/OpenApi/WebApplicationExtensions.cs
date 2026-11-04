@@ -1,5 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Diagnostics.CodeAnalysis;
 using WasteBatteriesRegBackend.Config;
 
 namespace WasteBatteriesRegBackend.OpenApi;

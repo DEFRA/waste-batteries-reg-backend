@@ -9,7 +9,7 @@ public static class EndpointRouteBuilderExtensions
 {
     public static IEndpointRouteBuilder MapApiEndpoints(this IEndpointRouteBuilder app)
     {
-        // TODO: Remove before deploying
+        // TEMPORARY: Remove before deploying
         app.MapExampleEndpoints().RequireAuthorization();
         app.MapExampleDataEndpoints().RequireAuthorization();
 
