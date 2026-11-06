@@ -34,30 +34,46 @@ A more extensive setup is available in [github.com/DEFRA/cdp-local-environment](
 See above.
 
 ```
-docker compose up -d mongodb
+docker compose up -d --wait mongodb
 ```
+
+The container starts a single-node replica set named `rs0`. The healthcheck initiates it and waits until the node is primary. `docker compose up` without `--wait` can return before that.
 
 #### MongoDB locally
 
-Alternatively install MongoDB locally:
+Alternatively install MongoDB locally as a single-node replica set, matching the Compose service.
 
 - Install [MongoDB](https://www.mongodb.com/docs/manual/tutorial/#installation) on your local machine
 - Start MongoDB:
+
 ```bash
-sudo mongod --dbpath ~/mongodb-cdp
+sudo mongod --replSet rs0 --bind_ip_all --dbpath ~/mongodb-cdp
 ```
+
+- Initiate the set once. An existing standalone data directory can be initiated the same way:
+
+```javascript
+rs.initiate({_id: "rs0", members: [{_id: 0, host: "localhost:27017"}]})
+```
+
+Connect with `directConnection=true`. The development and Compose connection strings do. That keeps the driver on the server you named. A client that discovers the set would follow the member host, which inside Compose is not the host published to your machine.
+
+#### Retries
+
+Retryable reads and retryable writes stay at the MongoDB .NET driver default, which is on. The connection strings in this repo do not turn them off. A transient network error on a single-document read or write is retried by the driver.
 
 #### MongoDB in CDP environments
 
 In CDP environments a MongoDB instance is already set up
-and the credentials exposed as enviromment variables.
+and the credentials exposed as environment variables.
+That instance is a replica set. The deployed connection string is supplied by the platform. Do not add `directConnection=true` there: the driver should discover the set.
 
 
 ### Inspect MongoDB
 
 To inspect the Database and Collections locally:
 ```bash
-mongosh
+mongosh "mongodb://127.0.0.1:27017/?directConnection=true"
 ```
 
 You can use the CDP Terminal to access the environments' MongoDB.
