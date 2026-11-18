@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using WasteBatteriesRegBackend.Utils.Logging;
 
@@ -99,6 +100,27 @@ public class ProblemDetailsTraceIdTests
     }
 
     [Fact]
+    public void Apply_WhenCurrentActivityWasCleared_UsesTheRequestActivity()
+    {
+        using var activity = new Activity("request").Start();
+        var previous = Activity.Current;
+        Activity.Current = null;
+        try
+        {
+            var context = Context();
+            context.HttpContext.Features.Set<IHttpActivityFeature>(new RequestActivityFeature(activity));
+
+            ProblemDetailsTraceId.Apply(context, "x-cdp-request-id");
+
+            Assert.Equal(activity.TraceId.ToHexString(), context.ProblemDetails.Extensions["traceId"]);
+        }
+        finally
+        {
+            Activity.Current = previous;
+        }
+    }
+
+    [Fact]
     public void Apply_WhenActivityTraceIdIsUnset_UsesRequestIdentifier()
     {
         using var activity = new Activity("unset").Start();
@@ -159,6 +181,11 @@ public class ProblemDetailsTraceIdTests
         ProblemDetailsTraceId.Apply(context, null);
 
         Assert.Equal(activity.TraceId.ToHexString(), context.ProblemDetails.Extensions["traceId"]);
+    }
+
+    private sealed class RequestActivityFeature(Activity activity) : IHttpActivityFeature
+    {
+        public Activity Activity { get; set; } = activity;
     }
 
     private static ProblemDetailsContext Context()
