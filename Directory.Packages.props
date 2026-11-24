@@ -25,16 +25,24 @@
     <PackageVersion Include="Elastic.CommonSchema.Serilog" Version="9.0.0" />
     <PackageVersion Include="Elastic.Serilog.Enrichers.Web" Version="9.0.0" />
     <PackageVersion Include="FluentValidation" Version="12.2.0" />
-    <PackageVersion Include="MongoDB.Bson" Version="3.14.0" />
-    <PackageVersion Include="MongoDB.Driver" Version="3.14.0" />
-    <PackageVersion Include="MongoDB.Driver.Authentication.AWS" Version="3.14.0" />
+    <!--
+      MongoDB.Bson is not listed. The driver requires the same Bson release.
+      A central pin below that release is a downgrade (NU1109). The package
+      manager restores the driver update before it can raise that pin, then
+      rolls the whole update back. The driver brings the matching Bson package.
+      Serilog.AspNetCore and Serilog.Settings.Configuration are the same kind of
+      pair: update them together, because AspNetCore requires the same
+      Settings.Configuration major.
+    -->
+    <PackageVersion Include="MongoDB.Driver" Version="3.14.1" />
+    <PackageVersion Include="MongoDB.Driver.Authentication.AWS" Version="3.14.1" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
-    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="11.0.0" />
     <PackageVersion Include="Serilog.Enrichers.ClientInfo" Version="3.0.0" />
     <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
     <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageVersion Include="Serilog.Formatting.Compact" Version="3.0.0" />
-    <PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.1" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="11.0.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="11.0.1" />
 
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
