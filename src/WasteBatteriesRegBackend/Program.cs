@@ -33,6 +33,7 @@ static WebApplication BuildApp(string[] args)
 [ExcludeFromCodeCoverage]
 static void ConfigureHost(WebApplicationBuilder builder)
 {
+    HostingActivity.Listen();
     builder.Host.UseSerilog(CdpLogging.Configuration);
 }
 
