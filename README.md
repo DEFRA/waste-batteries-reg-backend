@@ -92,6 +92,15 @@ dotnet test
 
 ### Running
 
+When the Batteries services run together locally, each one uses these ports. `dotnet run` binds this API to port 8085.
+
+| Service      | UI   | API  |
+| ------------ | ---- | ---- |
+| Registration | 3000 | 8085 |
+| Submissions  | 3001 | 8086 |
+| Obligations  | 3002 | 8087 |
+| Admin panel  | 3003 | n/a  |
+
 Run CDP-Deployments application:
 ```bash
 dotnet run --project src/WasteBatteriesRegBackend --launch-profile Development
